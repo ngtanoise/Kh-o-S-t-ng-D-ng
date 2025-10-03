@@ -1,0 +1,164 @@
+# Kh-o-S-t-ng-D-ng
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Khảo sát nhanh</title>
+
+<!-- Font chữ Bungee -->
+<link href="https://fonts.googleapis.com/css2?family=Bungee&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    margin:0; 
+    font-family: 'Bungee', cursive; 
+    background: #f4f4f4; 
+    display:flex; 
+    align-items:center; 
+    justify-content:center; 
+    height:100vh; 
+    overflow:hidden;
+  }
+  .survey, .birthday {
+    background: white; 
+    padding: 20px; 
+    border-radius: 12px; 
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    text-align:center; 
+    width: 340px; 
+    position:relative; 
+    z-index:1;
+  }
+  .survey h1 {font-size: 22px; margin-bottom: 10px;}
+  button {
+    background: linear-gradient(45deg,#ff4081,#ff9800);
+    color: white; padding: 10px 20px; border: none; border-radius: 25px; cursor:pointer; font-size:16px; font-weight:bold;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  }
+  button:hover {transform: scale(1.05);}
+  .birthday {display:none; background: rgba(255,255,255,0.95);}
+  .birthday h2 {
+    font-size: 28px;
+    background: linear-gradient(45deg,#ff4081,#ff9800,#4cafef);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: glow 1.5s infinite alternate;
+    margin-bottom: 10px;
+
+    /* ép chữ chỉ trên một hàng */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  @keyframes glow {
+    0% {text-shadow: 0 0 5px rgba(255,64,129,0.5);}
+    100% {text-shadow: 0 0 15px rgba(255,152,0,0.8);}
+  }
+  .birthday img {
+    max-width: 50%; /* giảm một nửa kích thước ảnh */
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    animation: bounce 1.5s infinite alternate;
+    margin-bottom: 15px;
+  }
+  @keyframes bounce {
+    0% {transform: translateY(0);}
+    100% {transform: translateY(-8px);}
+  }
+  .birthday p {
+    font-size: 16px;
+    font-weight: 500;
+    color: #444;
+    animation: fadeIn 2s ease;
+    margin-bottom: 20px;
+  }
+  @keyframes fadeIn {from {opacity:0;} to {opacity:1;}}
+  canvas {
+    position: fixed;
+    top:0; left:0;
+    width:100%; height:100%;
+    z-index:0; pointer-events:none;
+  }
+  #ytPlayer {width:0; height:0; border:0; position:absolute; left:-9999px;}
+</style>
+</head>
+<body>
+
+<div class="survey" id="survey">
+  <h1>Khảo sát nhanh khi sử dụng phần mềm</h1> 
+  <p>Vui lòng( đeo tai nghe hoặc mở loa) để tham gia</p> 
+  <button id="startBtn">Làm bài</button>
+</div>
+
+<div class="birthday" id="birthday">
+   <h2>🎉HAPPY BIRTHDAY🎉</h2>  
+ 
+  <p> It's your birthday. We gonna celebrate cho đến hết ngày🥳 </p> 
+  <p> Chúc Phú Bà sinh nhật vui vẻ, luôn cười tươi nhé. Hehe </p>
+  <iframe id="ytPlayer" src="" allow="autoplay"></iframe>
+</div>
+
+<canvas id="confetti"></canvas>
+
+<script>
+  const survey = document.getElementById('survey');
+  const birthday = document.getElementById('birthday');
+  const ytPlayer = document.getElementById('ytPlayer');
+  const canvas = document.getElementById('confetti');
+  const ctx = canvas.getContext('2d');
+
+  document.getElementById('startBtn').addEventListener('click', function(){
+    survey.style.display = 'none';
+    birthday.style.display = 'block';
+    ytPlayer.src = "https://www.youtube.com/embed/arouNK6qEzk?autoplay=1";
+    launchConfetti();
+  });
+
+  let pieces = [];
+  function randomColor(){
+    const colors = ['#ff4081','#ff9800','#4cafef','#4caf50','#f44336','#9c27b0'];
+    return colors[Math.floor(Math.random()*colors.length)];
+  }
+  function launchConfetti(){
+    resizeCanvas();
+    pieces = [];
+    for(let i=0;i<150;i++){
+      pieces.push({
+        x: Math.random()*canvas.width,
+        y: Math.random()*canvas.height - canvas.height,
+        w: 8,
+        h: 8,
+        color: randomColor(),
+        speed: Math.random()*3+2,
+        angle: Math.random()*360
+      });
+    }
+    requestAnimationFrame(updateConfetti);
+  }
+  function updateConfetti(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    pieces.forEach(p=>{
+      ctx.save();
+      ctx.translate(p.x,p.y);
+      ctx.rotate(p.angle * Math.PI/180);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+      ctx.restore();
+      p.y += p.speed;
+      p.angle += 2;
+      if(p.y > canvas.height) p.y = -10;
+    });
+    requestAnimationFrame(updateConfetti);
+  }
+  function resizeCanvas(){
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+</script>
+
+</body>
+</html>
+
